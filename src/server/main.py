@@ -1,5 +1,7 @@
 from src.server.commands import *
+from src.server.utils import FileUtil
 import socket
+import os
 
 class Server:
     HOST = '127.0.0.1'
@@ -7,6 +9,7 @@ class Server:
     PACKAGE_SIZE = 1024
 
     def __init__(self) -> None:
+        self.file_util = FileUtil()
         self.create_directory_command = CreateDirectoryCommand()
         self.remove_item_by_path_command = RemoveItemByPathCommand()
         self.list_files_command = ListFilesCommand()
@@ -42,7 +45,7 @@ class Server:
                     message = self.list_files_command.execute(__input.split(" ")[1])
                     self.__send_client_message(message)
 
-                elif ("send" in __input):
+                elif ("put" in __input):
                     message = self.send_file_command.execute(__input.split(" ")[1], self.client)
                     
                 else:
@@ -54,14 +57,23 @@ class Server:
         self.client.close()
         
     def __setup(self):
+        host = input("Enter a host: ")
         port = int(input("Enter a port: "))
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind((self.HOST, port))
+        self.server.bind((host, port))
         self.server.listen()
 
         self.client, address = self.server.accept()
 
-        print("Client connected at: " + str(address))
+        print(f"Client connected at: {host}:{port}")
+
+        self.__create_workspace()
+
+    def __create_workspace(self):
+        workspace_path = self.file_util.get_root_path() 
+
+        if (not self.file_util.does_directory_exist(workspace_path)):
+            os.mkdir(workspace_path)
 
     def __get_input(self):
         data = self.client.recv(self.PACKAGE_SIZE)
@@ -78,9 +90,9 @@ class Server:
     def __help(self):
         self.__send_client_message("Commands:\n" + 
               "mkdir <directory name> - Create a new directory in the server\n"+
-              "rm <directory name> - Remove a directory in the server\n"+
-              "ls <directory name> - List all files in given directory\n"+
-              "put <file name> - Send a file to the server\n")
+              "rm <path> - Remove a directory or a file in the server\n"+
+              "ls <directory name or . for root> - List all files in given directory\n"+
+              "put <file> - Send a file to the server\n")
         
     def __exit(self):
         self.__send_client_message("Goodbye!")
