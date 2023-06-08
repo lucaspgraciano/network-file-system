@@ -9,7 +9,7 @@ class CreateDirectoryCommand:
     def execute(self, directory_name):
         full_path = self.file_util.get_root_path() + "/" + directory_name
         self.__check_if_directory_exists(full_path)
-        os.mkdir(full_path)
+        os.makedirs(full_path, exist_ok=True)
         return "Directory created successfully!\n"
     
     def __check_if_directory_exists(self, directory_name):

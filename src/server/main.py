@@ -92,7 +92,8 @@ class Server:
               "mkdir <directory name> - Create a new directory in the server\n"+
               "rm <path> - Remove a directory or a file in the server\n"+
               "ls <directory name or . for root> - List all files in given directory\n"+
-              "put <file> - Send a file to the server\n")
+              "put <file> - Send a file to the server\n"+
+              "exit - Exit application\n")
         
     def __exit(self):
         self.__send_client_message("Goodbye!")
