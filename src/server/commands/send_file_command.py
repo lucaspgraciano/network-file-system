@@ -11,11 +11,10 @@ class SendFileCommand:
         file_path = self.file_util.get_root_path() + "/" + file_name
 
         with open(file_path, "wb") as file:
-            total_bytes = 0
             while True:
                 package = client.recv(self.PACKAGE_SIZE)
 
-                if (package.decode("utf-8") == "EOF"):
+                if len(package) < self.PACKAGE_SIZE:
                     break
 
                 file.write(package)

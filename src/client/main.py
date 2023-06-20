@@ -34,15 +34,17 @@ class Client:
                 self.client.send(message.encode(self.BIN_CODE))
 
                 with open(file_path, "rb") as file:
+                    bytes = 0
                     while True:
-                        package = file.read(self.PACKAGE_SIZE)
+                        bytes += self.PACKAGE_SIZE
+                        package = file.read(bytes)
 
                         if not package:
                             break
                             
                         self.client.sendall(package)
                 
-                self.client.send("EOF".encode(self.BIN_CODE))
+                # self.client.send("EOF".encode(self.BIN_CODE))
             else:
                 self.client.send(message.encode(self.BIN_CODE))
             
