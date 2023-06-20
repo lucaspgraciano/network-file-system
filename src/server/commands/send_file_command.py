@@ -13,8 +13,8 @@ class SendFileCommand:
         with open(file_path, "wb") as file:
             while True:
                 package = client.recv(self.PACKAGE_SIZE)
-
                 if len(package) < self.PACKAGE_SIZE:
+                    file.write(package)
                     break
 
                 file.write(package)

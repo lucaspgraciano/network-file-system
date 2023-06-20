@@ -34,10 +34,8 @@ class Client:
                 self.client.send(message.encode(self.BIN_CODE))
 
                 with open(file_path, "rb") as file:
-                    bytes = 0
                     while True:
-                        bytes += self.PACKAGE_SIZE
-                        package = file.read(bytes)
+                        package = file.read(self.PACKAGE_SIZE)
 
                         if not package:
                             break
